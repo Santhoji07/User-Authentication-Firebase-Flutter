@@ -1,30 +1,7 @@
-/*import 'package:flutter/material.dart';
-
-
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold
-    (body:Center(
-      child:Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [ Image.asset("assets/images/pic.jpeg",),],
-      )
-    ));
-  }
-}
 
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'home_screen.dart';
+import 'signup_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -33,70 +10,76 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-    });
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Image.asset(
-          'assets/images/pic.jpeg',
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
-        ),
-      ),
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
     );
-  }
-}*/
 
-import 'package:flutter/material.dart';
-import 'dart:async';
-import 'second_screen.dart';
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+    _controller.forward();
 
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MainNavigation()),
+        MaterialPageRoute(builder: (_) => const SignUpScreen()),
       );
     });
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Image.asset(
-          'assets/images/picture.png',
-          //fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF051937), Color(0xFF003973)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Center(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueAccent.withOpacity(0.5),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  )
+                ],
+              ),
+              child: Image.asset(
+                'assets/images/crud.png',
+                width: 250,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
+
 
 
 

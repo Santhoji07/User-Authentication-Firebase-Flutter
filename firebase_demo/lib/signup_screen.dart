@@ -1,4 +1,8 @@
+
+import 'package:firebase_demo/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
@@ -14,9 +18,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-Future<void> createAccount(asyn){
 
-}
   @override
   void initState() {
     super.initState();
@@ -31,7 +33,6 @@ Future<void> createAccount(asyn){
       begin: const Offset(0, 0.3),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
-
     _animationController.forward();
   }
 
@@ -42,6 +43,54 @@ Future<void> createAccount(asyn){
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _createAccount() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final name = nameController.text.trim();
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All fields are required')),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Account created successfully!')),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'email-already-in-use':
+          errorMessage = 'This email is already in use.';
+          break;
+        case 'weak-password':
+          errorMessage = 'The password provided is too weak.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'Invalid email address.';
+          break;
+        default:
+          errorMessage = 'An error occurred: ${e.message}';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    }
   }
 
   @override
@@ -85,7 +134,6 @@ Future<void> createAccount(asyn){
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Logo/Icon
                         Container(
                           width: 80,
                           height: 80,
@@ -110,7 +158,6 @@ Future<void> createAccount(asyn){
                         ),
                         const SizedBox(height: 24),
 
-                        // Title
                         const Text(
                           'Create Account',
                           style: TextStyle(
@@ -129,7 +176,6 @@ Future<void> createAccount(asyn){
                         ),
                         const SizedBox(height: 32),
 
-                        // Name Field
                         _buildTextField(
                           controller: nameController,
                           label: 'Full Name',
@@ -138,7 +184,6 @@ Future<void> createAccount(asyn){
                         ),
                         const SizedBox(height: 20),
 
-                        // Email Field
                         _buildTextField(
                           controller: emailController,
                           label: 'Email',
@@ -148,7 +193,6 @@ Future<void> createAccount(asyn){
                         ),
                         const SizedBox(height: 20),
 
-                        // Password Field
                         _buildTextField(
                           controller: passwordController,
                           label: 'Password',
@@ -162,10 +206,8 @@ Future<void> createAccount(asyn){
                             });
                           },
                         ),
-
                         const SizedBox(height: 32),
 
-                        // Sign Up Button
                         Container(
                           width: double.infinity,
                           height: 56,
@@ -183,9 +225,7 @@ Future<void> createAccount(asyn){
                             ],
                           ),
                           child: ElevatedButton(
-                            onPressed: () {
-                              // Add sign up logic here
-                            },
+                            onPressed: _createAccount,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
@@ -206,7 +246,6 @@ Future<void> createAccount(asyn){
 
                         const SizedBox(height: 24),
 
-                        // Login Link
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -216,7 +255,10 @@ Future<void> createAccount(asyn){
                             ),
                             TextButton(
                               onPressed: () {
-                                // Navigate to login
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                );
                               },
                               child: const Text(
                                 'Sign In',
