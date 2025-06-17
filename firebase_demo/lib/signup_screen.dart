@@ -14,7 +14,9 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+Future<void> createAccount(asyn){
 
+}
   @override
   void initState() {
     super.initState();
