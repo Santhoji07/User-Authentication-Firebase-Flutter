@@ -3,7 +3,8 @@ import 'package:firebase_demo/home_screen.dart';
 import 'package:flutter/material.dart';
 
 void main()async{
-  const Firebase.initializeApp(options: FirebaseOptions(apiKey: "AIzaSyDMf4kyQ3_X9PF5FqLpvBrnNUfHoRRnC2o",
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: FirebaseOptions(apiKey: "AIzaSyDMf4kyQ3_X9PF5FqLpvBrnNUfHoRRnC2o",
   authDomain: "fir-733ff.firebaseapp.com",
   projectId: "fir-733ff",
   storageBucket: "fir-733ff.firebasestorage.app",
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
